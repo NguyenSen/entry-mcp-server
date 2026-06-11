@@ -58,6 +58,10 @@ Biến môi trường (tùy chọn): `ENTRY_BASE_URL` (mặc định `https://ap
 | `entry_vpn_devices` | Thiết bị trong mạng riêng |
 | **`entry_tunnel_open`** | **Mở tunnel** đưa cổng local ra internet (spawn `ssh -R`), trả URL HTTPS |
 | `entry_tunnel_close` / `entry_tunnels_local` | Đóng / liệt kê tunnel đang chạy |
+| `entry_tunnel_acl_get` / `_set` / `_clear` | Giới hạn IP (allowlist) cho subdomain |
+| `entry_ddns_delete` / `entry_ddns_update_ip` | Xoá tên DDNS / trỏ tên về IP hiện tại |
+| `entry_ssh_key_delete` / `entry_reserved_delete` | Xoá SSH key / trả subdomain |
+| `entry_vpn_status` / `entry_tcp_pool` | Trạng thái VPN / cổng TCP |
 
 ## Ví dụ agent dùng
 > "Đưa app local cổng 3000 của tôi ra internet" → agent gọi `entry_tunnel_open({local_port:3000})` → nhận `https://abc.entry.io.vn` → đưa link cho bạn / tự test webhook.

@@ -113,6 +113,51 @@ server.tool('entry_tunnel_close', 'Đóng 1 tunnel đã mở bằng entry_tunnel
 server.tool('entry_tunnels_local', 'Liệt kê các tunnel do MCP này đang chạy (local).',
   async () => ok({ tunnels: [...tunnels.entries()].map(([id, t]) => ({ id, url: t.url, local_port: t.local_port, subdomain: t.subdomain })) }));
 
+// ============ XOÁ / DDNS-UPDATE / TUNNEL-ACL / VPN / TCP ============
+server.tool('entry_ddns_delete', 'Xoá 1 tên DDNS.',
+  { public_id: z.string().describe('public_id của record (từ entry_ddns_list)') },
+  wrap(({ public_id }) => api('DELETE', '/v1/ddns/' + encodeURIComponent(public_id))));
+
+server.tool('entry_ddns_update_ip', 'Trỏ 1 tên DDNS về IP (mặc định = IP công khai của máy đang chạy MCP). Cần label + token từ entry_ddns_create.',
+  { label: z.string().describe('Phần tên trước .ddns.entry.io.vn'),
+    token: z.string().describe('Token của record (trả về khi entry_ddns_create)'),
+    ip: z.string().optional().describe('IP muốn trỏ (bỏ trống = IP công khai hiện tại của máy)') },
+  wrap(async ({ label, token, ip }) => {
+    const u = new URL('https://entry.io.vn/nic/update');
+    u.searchParams.set('hostname', label + '.ddns.entry.io.vn');
+    if (ip) u.searchParams.set('myip', ip);
+    const res = await fetch(u, { headers: { authorization: 'Basic ' + Buffer.from(label + ':' + token).toString('base64') } });
+    const text = (await res.text()).trim();
+    return { result: text, ok: /^(good|nochg)/.test(text), fqdn: label + '.ddns.entry.io.vn' };
+  }));
+
+server.tool('entry_ssh_key_delete', 'Xoá 1 SSH key.',
+  { id: z.union([z.number(), z.string()]).describe('id của key (từ entry_ssh_keys)') },
+  wrap(({ id }) => api('DELETE', '/v1/ssh-keys/' + encodeURIComponent(id))));
+
+server.tool('entry_reserved_delete', 'Trả lại (xoá) 1 subdomain đã giữ chỗ.',
+  { id: z.union([z.number(), z.string()]).describe('id của subdomain (từ entry_reserved)') },
+  wrap(({ id }) => api('DELETE', '/v1/reserved/' + encodeURIComponent(id))));
+
+server.tool('entry_tunnel_acl_get', 'Xem giới hạn IP (allowlist) của các subdomain (tunnel đang chạy + đã giữ chỗ).',
+  wrap(() => api('GET', '/v1/tunnel-acl')));
+
+server.tool('entry_tunnel_acl_set', 'Đặt allowlist IP/CIDR cho 1 subdomain — chỉ IP trong danh sách mới vào được (tự giữ chỗ tên nếu cần).',
+  { subdomain: z.string().describe('Tên subdomain (không kèm .entry.io.vn)'),
+    cidrs: z.array(z.string()).describe('Danh sách IP/CIDR được phép, vd ["1.2.3.4","10.0.0.0/8"]'),
+    enabled: z.boolean().optional().describe('Bật/tắt (mặc định bật nếu có cidrs)') },
+  wrap(({ subdomain, cidrs, enabled }) => api('PUT', '/v1/tunnel-acl/' + encodeURIComponent(subdomain), enabled === undefined ? { cidrs } : { cidrs, enabled })));
+
+server.tool('entry_tunnel_acl_clear', 'Bỏ giới hạn IP của 1 subdomain (cho phép mọi IP lại).',
+  { subdomain: z.string().describe('Tên subdomain') },
+  wrap(({ subdomain }) => api('DELETE', '/v1/tunnel-acl/' + encodeURIComponent(subdomain))));
+
+server.tool('entry_vpn_status', 'Trạng thái mạng riêng (VPN) của tài khoản.',
+  wrap(() => api('GET', '/v1/vpn/status')));
+
+server.tool('entry_tcp_pool', 'Danh sách cổng TCP đang cấp cho tài khoản.',
+  wrap(() => api('GET', '/v1/tcp-pool')));
+
 // dọn khi thoát
 const cleanup = () => { for (const t of tunnels.values()) { try { t.child.kill(); } catch {} } };
 process.on('SIGINT', () => { cleanup(); process.exit(0); });
