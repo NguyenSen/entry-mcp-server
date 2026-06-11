@@ -3,10 +3,15 @@
   "version": "1.0.0",
   "description": "MCP server cho entry.io.vn — agent (Claude…) tự dùng tunnel / DDNS / SSH key / subdomain / VPN của entry.io.vn",
   "type": "module",
-  "bin": { "entry-mcp": "src/index.mjs" },
+  "bin": { "entry-io-mcp": "src/index.mjs" },
   "files": ["src", "README.md"],
   "engines": { "node": ">=18" },
   "scripts": { "start": "node src/index.mjs" },
+  "keywords": ["mcp", "model-context-protocol", "entry.io.vn", "tunnel", "ddns", "ngrok", "claude", "ai-agent", "self-host"],
+  "homepage": "https://entry.io.vn",
+  "repository": { "type": "git", "url": "https://github.com/entry-io-vn/entry.io.vn" },
+  "license": "MIT",
+  "author": "entry.io.vn",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
     "zod": "^3.23.0"
