@@ -9,6 +9,16 @@ Transport: **stdio** (chạy local cùng máy agent). Auth: **API token** (Beare
 Dashboard → <https://app.entry.io.vn> → **API tokens** → tạo → copy chuỗi `entry_…` (chỉ hiện 1 lần).
 
 ## 2. Cài
+
+**Cách A — npx từ GitHub (nhanh nhất, không cần npm publish):**
+```bash
+claude mcp add entry-io-vn -e ENTRY_API_TOKEN=entry_xxx -- npx -y github:NguyenSen/entry.io.vn#mcp-dist
+```
+> Repo đang **private** → cách này chỉ chạy trên máy **đã đăng nhập GitHub** có quyền truy cập repo (vd máy của bạn).
+> Cần chia sẻ cho người ngoài → publish npm (`npx entry-io-mcp`) hoặc tạo repo public riêng.
+> Cập nhật code MCP → chạy `bash mcp/publish-github.sh` để đẩy lại nhánh `mcp-dist`.
+
+**Cách B — clone thủ công:**
 ```bash
 git clone <repo> && cd mcp
 npm install
