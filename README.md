@@ -10,13 +10,12 @@ Dashboard → <https://app.entry.io.vn> → **API tokens** → tạo → copy ch
 
 ## 2. Cài
 
-**Cách A — npx từ GitHub (nhanh nhất, không cần npm publish):**
+**Cách A — npx từ GitHub (khuyên, không cần npm):**
 ```bash
-claude mcp add entry-io-vn -e ENTRY_API_TOKEN=entry_xxx -- npx -y github:NguyenSen/entry.io.vn#mcp-dist
+claude mcp add entry-io-vn -e ENTRY_API_TOKEN=entry_xxx -- npx -y github:NguyenSen/entry-mcp
 ```
-> Repo đang **private** → cách này chỉ chạy trên máy **đã đăng nhập GitHub** có quyền truy cập repo (vd máy của bạn).
-> Cần chia sẻ cho người ngoài → publish npm (`npx entry-io-mcp`) hoặc tạo repo public riêng.
-> Cập nhật code MCP → chạy `bash mcp/publish-github.sh` để đẩy lại nhánh `mcp-dist`.
+> Repo `github.com/NguyenSen/entry-mcp` **public** → ai cũng cài được, khỏi tài khoản npm.
+> Maintainer cập nhật code MCP → chạy `bash mcp/publish-github.sh` (đẩy `mcp/` lên repo đó).
 
 **Cách B — clone thủ công:**
 ```bash
